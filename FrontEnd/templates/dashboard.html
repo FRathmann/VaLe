@@ -1,0 +1,41 @@
+<ion-view view-title="Home">
+
+  <ion-content>
+    <ion-list class="home_list">
+        <ion-item href="#/app/services" ng-click="activeItemMenu(1)"
+                  ng-class="{'active':activeMenu==1}">
+          <img ng-if="activeMenu!=1" src="img/001.png"/>
+          <img ng-if="activeMenu==1" src="img/011.png"/>
+          <p>Services</p>
+        </ion-item>
+         <ion-item href="#/app/blog" ng-click="activeItemMenu(2)"
+                  ng-class="{'active':activeMenu==2}">
+           <img ng-if="activeMenu!=2" src="img/002.png"/>
+          <img ng-if="activeMenu==2" src="img/022.png"/>
+          <p>Blog</p>
+        </ion-item>
+         <ion-item href="#/app/team" ng-click="activeItemMenu(3)"
+                  ng-class="{'active':activeMenu==3}">
+           <img ng-if="activeMenu!=3" src="img/003.png"/>
+          <img ng-if="activeMenu==3" src="img/033.png"/>
+          <p>Our Team</p>
+        </ion-item>
+         <ion-item href="#/app/contact" ng-click="activeItemMenu(4)"
+                  ng-class="{'active':activeMenu==4}">
+           <img ng-if="activeMenu!=4" src="img/004.png"/>
+          <img ng-if="activeMenu==4" src="img/044.png"/>
+          <p>Contact Us</p>
+        </ion-item>
+         <ion-item href="#/app/about" ng-click="activeItemMenu(5)"
+                  ng-class="{'active':activeMenu==5}">
+           <img ng-if="activeMenu!=5" src="img/005.png"/>
+          <img ng-if="activeMenu==5" src="img/055.png"/>
+          <p>About Us</p>
+        </ion-item>
+        <ion-item>
+          <img src="img/006.png"/>
+          <p>Setting</p>
+        </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

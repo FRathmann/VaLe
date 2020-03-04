@@ -1,0 +1,69 @@
+<ion-side-menus enable-menu-with-back-views="false">
+  <ion-side-menu-content>
+    <ion-nav-bar class="bar-stable" align-title="center">
+        
+        <ion-nav-back-button class="button button-icon button-clear back_arrow" ng-click="myGoBack()">
+          <i class="ion-arrow-left-c"></i>
+        </ion-nav-back-button>
+
+        <ion-nav-buttons side="left">
+            <button  style="display:block" class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+      </ion-nav-buttons>
+      
+    </ion-nav-bar>
+    <ion-nav-view name="menuContent"></ion-nav-view>
+  </ion-side-menu-content>
+
+  <ion-side-menu side="left" width="250">
+    <ion-header-bar class="bar-stable menu_head">
+       <div class="account">
+         <img src="img/profile.png"/>
+         <div class="uplo_img">
+         <i class="ion-camera"></i>
+         </div>
+       </div>
+      <div class="data_user">
+       <h3>Mohamed Mostafa</h3>
+       <p><i class="icon ion-location"></i>Tanta,Egypt</p>
+      </div> 
+   
+    </ion-header-bar>
+    <ion-content class="new_menu">
+      <ion-list>
+        <ion-item menu-close class="item item-icon-left" href="#/app/dashboard">
+          <i class="icon ion-home"></i>
+          Home
+        </ion-item>
+        <ion-item menu-close  class="item item-icon-left" href="#/app/services">
+          <i class="icon ion-wrench"></i>
+          Services
+        </ion-item>
+        <ion-item menu-close class="item item-icon-left"  href="#/app/blog">
+          <i class="icon ion-document-text"></i>
+          Blog
+        </ion-item>
+        <ion-item menu-close class="item item-icon-left" href="#/app/team" >
+          <i class="icon ion-ios-people"></i>
+          Our Team
+        </ion-item>
+        <ion-item menu-close class="item item-icon-left" href="#/app/contact">
+          <i class="icon ion-ios-telephone"></i>
+         Contact Us
+        </ion-item>
+        <ion-item menu-close class="item item-icon-left" href="#/app/about">
+          <i class="icon ion-information-circled"></i>
+          About Us
+        </ion-item>
+         <ion-item menu-close class="item item-icon-left" href="#/login" >
+          <i class="icon ion-gear-b"></i>
+          Setting
+        </ion-item>
+        <ion-item menu-close class="item item-icon-left" href="#/login">
+          <i class="icon ion-log-out"></i>
+         Log Out
+        </ion-item>
+       
+      </ion-list>
+    </ion-content>
+  </ion-side-menu>
+</ion-side-menus>

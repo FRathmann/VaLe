@@ -1,0 +1,47 @@
+<ion-view view-title="Our Team">
+
+<div class="bar bar-subheader head_cat">
+ <div class="row">
+   <div class="col" ng-click="cat_color=1" ng-class="{'border_cat':cat_color==1}"><p>all</p></div>
+   <div class="col" ng-click="cat_color=2"  ng-class="{'border_cat':cat_color==2}"><p>sales</p></div>
+   <div class="col" ng-click="cat_color=3"  ng-class="{'border_cat':cat_color==3}"><p>clean</p></div>
+   <div class="col" ng-click="cat_color=4"  ng-class="{'border_cat':cat_color==4}"><p>repair</p></div>
+   <div class="col" ng-click="cat_color=5"  ng-class="{'border_cat':cat_color==5}"><p>engin</p></div>
+ </div>
+</div>
+  <ion-content class="has-subheader our_team" >
+ 
+   <div class="list list_cate">
+    <a href="#/app/detail" class="item items"
+       collection-repeat="item in items"
+       collection-item-width="'50%'"
+       collection-item-height="215"
+       ng-style="{'height':'215px','width':'50%'}"> 
+      
+      <div class="team_list">
+       <div class="cat_item animated bounceIn" style="background:url({{item.img}})no-repeat; background-size:100% 100%;">
+       </div>
+      
+      <div class="detail">
+       <h3>{{item.title}}</h3>
+       <p>Mechanic worker</p>
+       <div class="row">
+         <div class="col active">
+           <i class="ion-social-facebook"></i>
+         </div>
+          <div class="col">
+           <i class="ion-social-twitter"></i>
+         </div>
+          <div class="col">
+           <i class="ion-social-instagram"></i>
+         </div>
+          <div class="col">
+           <i class="ion-social-linkedin"></i>
+         </div>
+       </div>
+      </div>
+      </div> 
+    </a>
+  </div>
+  </ion-content>
+</ion-view>
