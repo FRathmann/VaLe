@@ -1,0 +1,21 @@
+{
+  "name": "valebackend",
+  "version": "0.1.0",
+  "description": "RESTful API backend for Vapmire Queen ranking statistics",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "watch": "tsc -w"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/restify": "^8.4.2",
+    "restify": "^8.5.1"
+  },
+  "devDependencies": {
+    "typescript": "^3.8.3"
+  }
+}
