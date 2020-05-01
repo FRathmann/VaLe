@@ -67,6 +67,7 @@ export class PlayerHandler {
                 const newPlayer = new Player({
                     id: result.insertId,
                     name: name,
+                    isAdmin: false,
                     salt: secrets.salt,
                     pwHash: secrets.pwHash
                 });
@@ -78,9 +79,15 @@ export class PlayerHandler {
     }
 
     private updatePlayer(req: Request, res: Response, next: Next): any {
-        // TODO: authorize request - update only allowed for own user
-        if (req.body.password == null) {
-            return next(new BadRequestError('password property missing'));
+        // TODO: authorize request
+        // - update password only allowed for own user or admin
+        // - changing admin flag only allowed for admins
+        if (req.body.password == null && req.body.isAdmin == null) {
+            return next(new BadRequestError('at least "password" or "isAdmin" property required'));
+        }
+
+        if (req.body.isAdmin != null && typeof req.body.isAdmin !== 'boolean') {
+            return next(new BadRequestError('isAdmin property has to be a boolean'));
         }
 
         const dbConnectionPool = this.dbConnectionPool;
@@ -96,11 +103,19 @@ export class PlayerHandler {
                 return next(new NotFoundError('unkown id'));
             }
             const player = new Player(resultsPlayer[0]);
-            const secrets = hashPw(req.body.password);
-            const updateQuery = format('UPDATE player SET pwhash = ?, salt = ? WHERE id = ?;',
-                [secrets.pwHash, secrets.salt, req.params.id]);
-            player.salt = secrets.salt;
-            player.pwHash = secrets.pwHash;
+            if (req.body.password != null) {
+                const secrets = hashPw(req.body.password);
+                player.salt = secrets.salt;
+                player.pwHash = secrets.pwHash;
+            }
+
+            if (req.body.isAdmin != null) {
+                player.isAdmin = req.body.isAdmin;
+            }
+            
+            
+            const updateQuery = format('UPDATE player SET pwhash = ?, salt = ?, isAdmin = ? WHERE id = ?;',
+                [player.pwHash, player.salt, player.isAdmin, req.params.id]);
 
             // TODO: eventually move update to player object
             dbConnectionPool.query(updateQuery, function (err, resultsUpdate) {
@@ -156,6 +171,7 @@ export class PlayerHandler {
 interface IPlayer {
     id: number;
     name: string;
+    isAdmin: boolean;
     salt?: string;
     pwHash?: string;
 }
@@ -165,21 +181,24 @@ interface SaltedHash {
     salt: string;
 }
 
+// TODO: add admin flag + extend in DB
 class Player {
 
     public id: number;
     public name: string;
+    public isAdmin: boolean;
     public salt: string;
     public pwHash: string;
 
     constructor(initValues?: IPlayer) {
         this.id = initValues && initValues.id || 0
         this.name = initValues && initValues.name || ''
+        this.isAdmin = initValues && initValues.isAdmin || false
         this.salt = initValues && initValues.salt || ''
         this.pwHash = initValues && initValues.pwHash || ''
     }
 
     public getPublicProperties(): IPlayer {
-        return { id: this.id, name: this.name };
+        return { id: this.id, name: this.name, isAdmin: this.isAdmin };
     }
 }
