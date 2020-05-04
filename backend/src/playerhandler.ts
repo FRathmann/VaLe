@@ -1,4 +1,4 @@
-import { Server, RequestHandler, Next, Request, Response } from 'restify';
+import { Server, Next, Request, Response } from 'restify';
 import { BadRequestError, ConflictError, NotFoundError } from 'restify-errors';
 import { format, Pool } from 'mysql';
 import { v4 as uuidv4 } from 'uuid';
@@ -11,11 +11,6 @@ function hashPw(password: string): SaltedHash {
     hash.update(password + salt);
     const pwHash = hash.digest('hex');
     return { pwHash, salt };
-}
-
-export const handler: RequestHandler = function (req: Request, res: Response, next: Next) {
-    res.send('hello from Playerhandler to: ' + req.params.name);
-    next();
 }
 
 //TODO: rework debug logs
@@ -47,7 +42,7 @@ export class PlayerHandler {
                 console.log(err);
                 return next(new Error(err.message));
             }
-            console.log("Result query: " + result);
+            console.log("Result query: ", result);
 
             if (result.length > 0) {
                 return next(new ConflictError('name not available'));
@@ -69,7 +64,7 @@ export class PlayerHandler {
                     name: name,
                     isAdmin: false,
                     salt: secrets.salt,
-                    pwHash: secrets.pwHash
+                    pwhash: secrets.pwHash
                 });
 
                 res.send(201, newPlayer.getPublicProperties());
@@ -97,7 +92,7 @@ export class PlayerHandler {
                 console.log(err);
                 return next(new Error(err.message));
             }
-            console.log("Result: " + resultsPlayer);
+            console.log("Result: ", resultsPlayer);
 
             if (resultsPlayer.length === 0) {
                 return next(new NotFoundError('unkown id'));
@@ -106,7 +101,7 @@ export class PlayerHandler {
             if (req.body.password != null) {
                 const secrets = hashPw(req.body.password);
                 player.salt = secrets.salt;
-                player.pwHash = secrets.pwHash;
+                player.pwhash = secrets.pwHash;
             }
 
             if (req.body.isAdmin != null) {
@@ -115,7 +110,7 @@ export class PlayerHandler {
             
             
             const updateQuery = format('UPDATE player SET pwhash = ?, salt = ?, isAdmin = ? WHERE id = ?;',
-                [player.pwHash, player.salt, player.isAdmin, req.params.id]);
+                [player.pwhash, player.salt, player.isAdmin, req.params.id]);
 
             // TODO: eventually move update to player object
             dbConnectionPool.query(updateQuery, function (err, resultsUpdate) {
@@ -123,7 +118,7 @@ export class PlayerHandler {
                     console.log(err);
                     return next(new Error(err.message));
                 }
-                console.log("Result Update: " + resultsUpdate);
+                console.log("Result Update: ", resultsUpdate);
 
                 res.send(200, player.getPublicProperties());
                 return next();
@@ -138,7 +133,7 @@ export class PlayerHandler {
                 console.log(err);
                 return next(new Error(err.message));
             }
-            console.log("Result: " + results);
+            console.log("Result: ", results);
 
             if (results.length === 0) {
                 return next(new NotFoundError('unkown id'));
@@ -160,7 +155,7 @@ export class PlayerHandler {
                 console.log(err);
                 return next(new Error(err.message));
             }
-            console.log("Result: " + results);
+            console.log("Result: ", results);
 
             res.send(200, results.map((player: IPlayer) => new Player(player).getPublicProperties()));
             return next();
@@ -173,7 +168,7 @@ interface IPlayer {
     name: string;
     isAdmin: boolean;
     salt?: string;
-    pwHash?: string;
+    pwhash?: string;
 }
 
 interface SaltedHash {
@@ -182,20 +177,20 @@ interface SaltedHash {
 }
 
 // TODO: add admin flag + extend in DB
-class Player {
+export class Player {
 
     public id: number;
     public name: string;
     public isAdmin: boolean;
     public salt: string;
-    public pwHash: string;
+    public pwhash: string;
 
     constructor(initValues?: IPlayer) {
         this.id = initValues && initValues.id || 0
         this.name = initValues && initValues.name || ''
         this.isAdmin = initValues && initValues.isAdmin || false
         this.salt = initValues && initValues.salt || ''
-        this.pwHash = initValues && initValues.pwHash || ''
+        this.pwhash = initValues && initValues.pwhash || ''
     }
 
     public getPublicProperties(): IPlayer {
