@@ -11,6 +11,11 @@ interface WhitelistRoute {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE';
 }
 
+export interface AuthorizedRequest extends Request {
+    /** available if request has been authorized  */
+    player?: Player;
+}
+
 export function authenticateBasic(whiteListRoutes: WhitelistRoute[], dbConnectionPool: Pool): RequestHandler {
 
     const whiteList = whiteListRoutes.map(route => `${route.method} ${route.path}`);
@@ -38,6 +43,7 @@ export function authenticateBasic(whiteListRoutes: WhitelistRoute[], dbConnectio
                     const hash = crypto.createHash('sha256');
                     hash.update(req.authorization?.basic?.password + player.salt);
                     if(hash.digest('hex') === player.pwhash) {
+                        (req as AuthorizedRequest).player = player;
                         return next();
                     } else {
                         return next(new UnauthorizedError());

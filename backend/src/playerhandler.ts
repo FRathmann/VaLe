@@ -1,7 +1,8 @@
 import { Server, Next, Request, Response } from 'restify';
-import { BadRequestError, ConflictError, NotFoundError } from 'restify-errors';
+import { BadRequestError, ConflictError, NotFoundError, ForbiddenError } from 'restify-errors';
 import { format, Pool } from 'mysql';
 import { v4 as uuidv4 } from 'uuid';
+import { AuthorizedRequest } from './auth';
 
 const crypto = require('crypto');
 
@@ -73,16 +74,25 @@ export class PlayerHandler {
         });
     }
 
-    private updatePlayer(req: Request, res: Response, next: Next): any {
-        // TODO: authorize request
-        // - update password only allowed for own user or admin
-        // - changing admin flag only allowed for admins
+    private updatePlayer(req: AuthorizedRequest, res: Response, next: Next): any {
+        // check payload
         if (req.body.password == null && req.body.isAdmin == null) {
             return next(new BadRequestError('at least "password" or "isAdmin" property required'));
         }
 
         if (req.body.isAdmin != null && typeof req.body.isAdmin !== 'boolean') {
             return next(new BadRequestError('isAdmin property has to be a boolean'));
+        }
+
+        // check authorization
+        if (req.body.password != null) {
+            if (req.player?.id != req.params.id && !req.player?.isAdmin) {
+                return next(new ForbiddenError('password change only allowed for own user or as admin'));
+            }
+        }
+
+        if (req.body.isAdmin != null && !req.player?.isAdmin) {
+            return next(new ForbiddenError('isAdmin property can only be changed by admins'));
         }
 
         const dbConnectionPool = this.dbConnectionPool;
