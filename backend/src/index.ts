@@ -2,11 +2,13 @@ import { createServer, Server, RequestHandler, Next, Request, Response, plugins 
 import { authenticateBasic } from './auth';
 import { PlayerHandler } from './playerhandler';
 import { getDbConnection, getDbConnectionPool } from './dbconnector';
+import { SessionHandler } from './sessionhandler';
 
 let server: Server = createServer();
 
 let dbConPool = getDbConnectionPool();
 const playerhandler = new PlayerHandler(server, dbConPool);
+const sessionhandler = new SessionHandler(server, dbConPool);
 
 //server.post('/players', (a,b,c) => {return "tbd"}); // post on players has to be whitelisted in the authentication function
 
